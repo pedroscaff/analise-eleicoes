@@ -8,57 +8,35 @@ const {
 } = require('./headers')
 
 module.exports = {
-  bensCandidato: (req, res) => {
+  candidato: (req, res) => {
     if (!req.query.id || !req.query.uf) {
       res.status(400).send('Bad Request, id and uf params required')
     }
     const { id, uf } = req.query
-    const filepath = path.resolve(
-      `./data/bem_candidato_2014/bem_candidato_2014_${uf.toUpperCase()}.txt`
-    )
-    const stream = fs.createReadStream(filepath)
-    const parsedData = []
-    const csvStream = csv
-      .parse({
-        delimiter: ';',
-        headers: HEADERS_BEM_CANDIDATO
-      })
-      .on('data', data => {
-        if (data['SQ_CANDIDATO'] === id) {
-          data['VALOR_BEM'] = +data['VALOR_BEM']
-          parsedData.push(data)
-        }
-      })
-      .on('end', () => {
-        res.json({ result: parsedData })
-      })
-
-    stream.pipe(csvStream)
+    const db = req.app.locals.db
+    db.collection(`bens-candidatos-${ uf.toLowerCase() }`).find({
+      _id: id
+    }).toArray((err, arr) => {
+      if (err) {
+        res.status(500).send(err.Message)
+      }
+      res.json(arr)
+    })
   },
   listaCandidatos: (req, res) => {
     if (!req.query.cargo || !req.query.uf) {
       res.status(400).send('Bad Request, cargo and uf params required')
     }
-    const { cargo, uf } = req.query
-    const filepath = path.resolve(
-      `./data/consulta_cand_2014/consulta_cand_2014_${uf.toUpperCase()}.txt`
-    )
-    const stream = fs.createReadStream(filepath)
-    const parsedData = []
-    const csvStream = csv
-      .parse({
-        delimiter: ';',
-        headers: HEADERS_CONSULTA_CANDIDATO
-      })
-      .on('data', data => {
-        if (data['CODIGO_CARGO'] === cargo) {
-          parsedData.push(data)
-        }
-      })
-      .on('end', () => {
-        res.json({ result: parsedData })
-      })
-
-    stream.pipe(csvStream)
+    const { cargo, uf, partido } = req.query
+    const db = req.app.locals.db
+    db.collection(`candidatos-${ uf.toLowerCase() }`).find({
+      CODIGO_CARGO: +cargo,
+      NUMERO_PARTIDO: +partido
+    }).toArray((err, arr) => {
+      if (err) {
+        res.status(500).send(err.Message)
+      }
+      res.json(arr)
+    })
   }
 }
