@@ -17,8 +17,8 @@ module.exports = {
     db.collection(`bens-candidatos-${ uf.toLowerCase() }`).find({
       _id: id
     }).toArray((err, arr) => {
-      if (err) {
-        res.status(500).send(err.Message)
+      if (err) {  
+        res.status(500).send(err)
       }
       res.json(arr)
     })
@@ -34,7 +34,7 @@ module.exports = {
       NUMERO_PARTIDO: +partido
     }).toArray((err, arr) => {
       if (err) {
-        res.status(500).send(err.Message)
+        res.status(500).send(err)
       }
       res.json(arr)
     })

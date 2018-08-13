@@ -1,6 +1,6 @@
 import {
-	createElement as n,
-	Component
+  createElement as n,
+  Component
 } from 'react'
 import styled from 'styled-components'
 
@@ -18,23 +18,23 @@ const path = styled.path`
   fill: #fff;
 
   &:hover {
-  	fill: #000
+    fill: #000
   };
 `
 
 export default class Map extends Component {
-	constructor(props) {
-		super(props)
-		const projection = geoMercator().fitSize([500, 500], props.json)
-		this.pathGenerator = geoPath().projection(projection)
-	}
+  constructor(props) {
+    super(props)
+    const projection = geoMercator().fitSize([500, 500], props.json)
+    this.pathGenerator = geoPath().projection(projection)
+  }
 
-	render() {
-		return n(svg,
-			{},
-			this.props.json.features.map(feature => n(
-				path, { key: feature.properties.UF_05, d: this.pathGenerator(feature) })
-			)
-			)
-	}
+  render() {
+    return n(svg,
+      {},
+      this.props.json.features.map(feature => n(
+        path, { key: feature.properties.UF_05, d: this.pathGenerator(feature) })
+      )
+      )
+  }
 }
