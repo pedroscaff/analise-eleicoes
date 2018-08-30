@@ -1,0 +1,60 @@
+type Query {
+	candidato(id: String!, uf: String!): Candidato
+	candidatos(cargo: Int!, uf: String!, partido: Int): [Candidato!]!
+}
+
+type Candidato {
+	bens: [Bem!]
+  ANO_ELEICAO: Int!
+  DESCRICAO_ELEICAO: String!
+  SIGLA_UE: String!
+  DESCRICAO_UE: String!
+  CODIGO_CARGO: Int!
+  DESCRICAO_CARGO: String!
+  NOME_CANDIDATO: String!
+  SEQUENCIAL_CANDIDATO: String!
+  NUMERO_CANDIDATO: String!
+  CPF_CANDIDATO: String!
+  NOME_URNA_CANDIDATO: String!
+  COD_SITUACAO_CANDIDATURA: String!
+  DES_SITUACAO_CANDIDATURA: String!
+  NUMERO_PARTIDO: Int!
+  SIGLA_PARTIDO: String!
+  NOME_PARTIDO: String!
+  CODIGO_LEGENDA: String!
+  SIGLA_LEGENDA: String!
+  COMPOSICAO_LEGENDA: String!
+  NOME_LEGENDA: String!
+  CODIGO_OCUPACAO: String!
+  DESCRICAO_OCUPACAO: String!
+  DATA_NASCIMENTO: String!
+  NUM_TITULO_ELEITORAL_CANDIDATO: String!
+  IDADE_DATA_ELEICAO: String!
+  CODIGO_SEXO: String!
+  DESCRICAO_SEXO: String!
+  COD_GRAU_INSTRUCAO: String!
+  DESCRICAO_GRAU_INSTRUCAO: String!
+  CODIGO_ESTADO_CIVIL: String!
+  DESCRICAO_ESTADO_CIVIL: String!
+  CODIGO_COR_RACA: String!
+  DESCRICAO_COR_RACA: String!
+  CODIGO_NACIONALIDADE: String!
+  DESCRICAO_NACIONALIDADE: String!
+  SIGLA_UF_NASCIMENTO: String!
+  CODIGO_MUNICIPIO_NASCIMENTO: String!
+  NOME_MUNICIPIO_NASCIMENTO: String!
+  DESPESA_MAX_CAMPANHA: String!
+  COD_SIT_TOT_TURNO: String!
+  DESC_SIT_TOT_TURNO: String!
+  NM_EMAIL: String!
+}
+
+type Bem {
+  ANO_ELEICAO: Int!
+  DESCRICAO_ELEICAO: String!
+  CD_TIPO_BEM_CANDIDATO: Int!
+  DS_TIPO_BEM_CANDIDATO: String!
+  DETALHE_BEM: String!
+  VALOR_BEM: Float!
+  HORA_ULTIMA_ATUALIZACAO: String!
+}

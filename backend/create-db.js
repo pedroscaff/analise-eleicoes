@@ -65,10 +65,14 @@ function createCandidatosDB (collection) {
         headers: HEADERS_CONSULTA_CANDIDATO
       })
       .on('data', data => {
-        data._id = data['SQ_CANDIDATO']
+        data._id = data['SEQUENCIAL_CANDIDATO']
         data['CODIGO_CARGO'] = +data['CODIGO_CARGO']
         data['NUMERO_PARTIDO'] = +data['NUMERO_PARTIDO']
-        parsedData.push(data)
+        if (parsedData.filter(parsed => parsed._id === data._id).length > 0) {
+          console.log(`duplicate entry ${ data._id }`)
+        } else {
+          parsedData.push(data)
+        }
       })
       .on('end', () => {
         collection.drop(() => {

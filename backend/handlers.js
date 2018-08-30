@@ -1,42 +1,54 @@
 const fs = require('fs')
 const path = require('path')
 const csv = require('fast-csv')
+const getFieldNames = require('graphql-list-fields')
 
 const {
   HEADERS_BEM_CANDIDATO,
   HEADERS_CONSULTA_CANDIDATO
 } = require('./headers')
 
+const getBensCandidato = async (id, uf, db) => {
+  const result = await db.collection(`bens-candidatos-${ uf.toLowerCase() }`).find({
+    _id: id
+  }).toArray()
+  return result[0] && result[0].bens
+}
+
+const getInfoCandidato = async (query, uf, db) => {
+  return await db.collection(`candidatos-${ uf.toLowerCase() }`).find(query).toArray()
+}
+
 module.exports = {
-  candidato: (req, res) => {
-    if (!req.query.id || !req.query.uf) {
-      res.status(400).send('Bad Request, id and uf params required')
-    }
-    const { id, uf } = req.query
-    const db = req.app.locals.db
-    db.collection(`bens-candidatos-${ uf.toLowerCase() }`).find({
+  candidato: async (root, args, db) => {
+    const { id, uf } = args
+    const infoCandidato = getInfoCandidato({
       _id: id
-    }).toArray((err, arr) => {
-      if (err) {  
-        res.status(500).send(err)
-      }
-      res.json(arr)
+    }, uf, db)
+    const bens = getBensCandidato(id, uf, db)
+
+    return await Promise.all([infoCandidato, bens]).then(values => {
+      const candidato = values[0][0]
+      candidato.bens = values[1]
+      return candidato
     })
   },
-  listaCandidatos: (req, res) => {
-    if (!req.query.cargo || !req.query.uf) {
-      res.status(400).send('Bad Request, cargo and uf params required')
+  listaCandidatos: async (root, args, context, info, db) => {
+    const { cargo, uf, partido } = args
+    const fields = getFieldNames(info)
+    const generalQuery = {
+      CODIGO_CARGO: cargo
     }
-    const { cargo, uf, partido } = req.query
-    const db = req.app.locals.db
-    db.collection(`candidatos-${ uf.toLowerCase() }`).find({
-      CODIGO_CARGO: +cargo,
-      NUMERO_PARTIDO: +partido
-    }).toArray((err, arr) => {
-      if (err) {
-        res.status(500).send(err)
-      }
-      res.json(arr)
-    })
+    if (partido) {
+      generalQuery.NUMERO_PARTIDO = partido
+    }
+    const infoCandidato = await getInfoCandidato(generalQuery, uf, db)
+    const requestBens = fields.filter(field => field.includes('bens')).length > 0
+    if (requestBens) {
+      infoCandidato.forEach(candidato => {
+        candidato.bens = getBensCandidato(candidato._id, uf, db)
+      })
+    }
+    return infoCandidato
   }
 }
