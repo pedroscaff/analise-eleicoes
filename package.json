@@ -17,7 +17,7 @@
     "fast-csv": "^2.4.1",
     "graphql-list-fields": "^2.0.2",
     "graphql-yoga": "^1.16.2",
-    "mongodb": "^3.1.1",
+    "mongodb": "^3.1.13",
     "react": "^16.4.2",
     "react-dom": "^16.4.2",
     "styled-components": "^3.4.1"
